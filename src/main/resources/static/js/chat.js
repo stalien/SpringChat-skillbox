@@ -1,5 +1,6 @@
 $(function(){
-    let lastResponse = '';
+    let lastMessagesResponse = '';
+    let lastUsersResponse = '';
 
     let getMessageElement = function(message) {
         let item = $('<div class="message-item"></div>');
@@ -21,7 +22,7 @@ $(function(){
                 return;
             }
             let responseString = JSON.stringify(response);
-            if (lastResponse == responseString) {
+            if (lastMessagesResponse == responseString) {
                 return;
             }
             $('.messages-list').html('');
@@ -29,9 +30,28 @@ $(function(){
                 let element = getMessageElement(response[i]);
                 $('.messages-list').append(element);
             }
-            lastResponse = responseString;
+            lastMessagesResponse = responseString;
         });
     };
+
+    let updateUsers = function() {
+            $.get('/api/users', {}, function(response){
+                if (response.length == 0) {
+                    $('.users-list').html('<i>Пользователей нет</i>');
+                    return;
+                }
+                let responseString = JSON.stringify(response);
+                if (lastUsersResponse == responseString) {
+                    return;
+                }
+                $('.users-list').html('');
+                for (i in response) {
+                    let element = $('<div class="user-item">' + response[i] + '</div>');
+                    $('.users-list').append(element);
+                }
+                lastMessagesResponse = responseString;
+            });
+        };
 
     let initApplication = function() {
         $('.messages-and-users').css({display: 'flex'});
@@ -49,6 +69,7 @@ $(function(){
         });
 
         setInterval(updateMessages, 1000);
+        setInterval(updateUsers, 1000);
     };
 
     let registerUser = function(name) {

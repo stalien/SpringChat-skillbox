@@ -81,4 +81,13 @@ public class ChatController {
                 .map(message -> MessageMapper.map(message))
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/api/users")
+    public List<String> getUsersList() {
+        return userRepository
+                .findAll()
+                .stream()
+                .map(user -> user.getName())
+                .collect(Collectors.toList());
+    }
 }
